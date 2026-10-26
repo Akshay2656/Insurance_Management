@@ -13,9 +13,9 @@ import { Policy } from '../../../core/models/policy.model';
 })
 export class CustomerDashboardComponent implements OnInit {
 
-  // Demo customer ID. We will replace this with the
-  // logged-in customer's ID when authentication is connected.
-  customerId = 201;
+  // Temporary demo customer ID.
+  // Replace this with the logged-in customer's ID when authentication is connected.
+  customerId = 101;
 
   totalPolicies = 0;
   activePolicies = 0;
@@ -36,17 +36,21 @@ export class CustomerDashboardComponent implements OnInit {
     this.errorMessage = '';
 
     this.policyApiService.getAllPolicies().subscribe({
-      next: (response: any) => {
-        // Supports an ApiResponse containing data or a direct array.
-        const policies: Policy[] = Array.isArray(response)
-          ? response
-          : Array.isArray(response?.data)
-            ? response.data
-            : [];
+      next: (response) => {
+        if (!response || response.success !== true) {
+          this.errorMessage =
+            response?.message || 'Unable to load policies.';
+          this.loading = false;
+          return;
+        }
 
-        // Show only policies belonging to this customer.
+        const policies: Policy[] = Array.isArray(response.data)
+          ? response.data
+          : [];
+
+        // Display policies belonging only to this demo customer.
         const customerPolicies = policies.filter(
-          policy => policy.customerId === this.customerId
+          policy => Number(policy.customerId) === this.customerId
         );
 
         this.totalPolicies = customerPolicies.length;
@@ -56,8 +60,10 @@ export class CustomerDashboardComponent implements OnInit {
         ).length;
 
         this.pendingPolicies = customerPolicies.filter(
-          policy => policy.status?.toUpperCase() === 'PENDING'
-            || policy.status?.toUpperCase() === 'PENDING_PAYMENT'
+          policy =>
+            ['PENDING', 'PENDING_PAYMENT'].includes(
+              policy.status?.toUpperCase() ?? ''
+            )
         ).length;
 
         this.expiredPolicies = customerPolicies.filter(
@@ -65,10 +71,22 @@ export class CustomerDashboardComponent implements OnInit {
         ).length;
 
         this.loading = false;
+
+        console.log('Customer policies:', customerPolicies);
+        console.log('Total policies:', this.totalPolicies);
+        console.log('Active policies:', this.activePolicies);
+        console.log('Pending policies:', this.pendingPolicies);
+        console.log('Expired policies:', this.expiredPolicies);
       },
+
       error: (error) => {
         console.error('Unable to load policies:', error);
-        this.errorMessage = 'Unable to load policies. Please try again.';
+
+        this.errorMessage =
+          error.status === 0
+            ? 'Cannot connect to the Policy API. Check CORS and the API URL.'
+            : `Unable to load policies. HTTP status: ${error.status}.`;
+
         this.loading = false;
       }
     });

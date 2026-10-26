@@ -58,26 +58,28 @@
       <div class="form-group">
         <label for="policy">Select Policy *</label>
 
-        <select
-          id="policy"
-          name="policy"
-          [(value)]="selectedPolicyId"
-          (change)="selectedPolicyId = $any($event.target).value"
-          required
-          [disabled]="loading || policies.length === 0"
-        >
-          <option value="">Choose a policy</option>
+        
+<select
+  id="policy"
+  name="policy"
+  [value]="selectedPolicyId"
+  (change)="selectedPolicyId = $any($event.target).value"
+  required
+  [disabled]="loading || policies.length === 0"
+>
+  <option value="">Choose a policy</option>
 
-          @for (policy of policies; track policy.policyId) {
-            <option [value]="policy.policyId">
-              {{ policy.policyNumber }} — {{ policy.status }}
-            </option>
-          }
-        </select>
+  @for (policy of policies; track policy.policyId) {
+    <option [value]="policy.policyId">
+      {{ policy.policyNumber }} — {{ policy.status }}
+    </option>
+  }
+</select>
 
-        @if (!loading && policies.length === 0) {
-          <small>No eligible policies were found for this demo customer.</small>
-        }
+@if (!loading && policies.length === 0) {
+  <small>No eligible policies were found for this demo customer.</small>
+}
+
       </div>
 
       <div class="form-group">

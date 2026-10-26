@@ -30,33 +30,41 @@ export class RenewalRequestComponent implements OnInit {
     this.loadPolicies();
   }
 
-  loadPolicies(): void {
-    this.loading = true;
-    this.errorMessage = '';
+  
+loadPolicies(): void {
+  this.loading = true;
+  this.errorMessage = '';
 
-    this.policyApiService.getAllPolicies().subscribe({
-      next: (response: any) => {
-        const allPolicies: Policy[] = Array.isArray(response)
-          ? response
-          : Array.isArray(response?.data)
-            ? response.data
-            : [];
-
-        // Show this demo customer's policies that may need renewal.
-        this.policies = allPolicies.filter(policy =>
-          policy.customerId === this.customerId &&
-          ['ACTIVE', 'EXPIRED'].includes(policy.status?.toUpperCase())
-        );
-
+  this.policyApiService.getAllPolicies().subscribe({
+    next: (response) => {
+      if (!response || response.success !== true) {
+        this.policies = [];
+        this.errorMessage =
+          response?.message || 'Unable to load policies.';
         this.loading = false;
-      },
-      error: (error) => {
-        console.error('Unable to load policies:', error);
-        this.errorMessage = 'Unable to load policies. Please try again.';
-        this.loading = false;
+        return;
       }
-    });
-  }
+
+      const allPolicies: Policy[] = Array.isArray(response.data)
+        ? response.data
+        : [];
+
+      this.policies = allPolicies.filter(policy =>
+        policy.customerId === this.customerId &&
+        ['ACTIVE', 'EXPIRED'].includes(policy.status?.toUpperCase() ?? '')
+      );
+
+      this.loading = false;
+    },
+
+    error: (error) => {
+      console.error('Unable to load policies:', error);
+      this.errorMessage = 'Unable to load policies. Please try again.';
+      this.loading = false;
+    }
+  });
+}
+
 
   submitRequest(): void {
     this.successMessage = '';

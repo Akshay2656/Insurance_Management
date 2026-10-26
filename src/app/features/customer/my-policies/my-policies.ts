@@ -12,10 +12,6 @@ import { Policy } from '../../../core/models/policy.model';
 })
 export class MyPoliciesComponent implements OnInit {
 
-  // Temporary demo customer ID.
-  // Later, this will come from the logged-in customer.
-  customerId = 201;
-
   policies: Policy[] = [];
   filteredPolicies: Policy[] = [];
 
@@ -36,23 +32,43 @@ export class MyPoliciesComponent implements OnInit {
     this.errorMessage = '';
 
     this.policyApiService.getAllPolicies().subscribe({
-      next: (response: any) => {
-        const allPolicies: Policy[] = Array.isArray(response)
-          ? response
-          : Array.isArray(response?.data)
-            ? response.data
-            : [];
+      next: (response) => {
+        console.log('Policy API response:', response);
 
-        this.policies = allPolicies.filter(
-          policy => policy.customerId === this.customerId
-        );
+        if (!response || response.success !== true) {
+          this.policies = [];
+          this.filteredPolicies = [];
+          this.errorMessage =
+            response?.message || 'Unable to load policies.';
+          this.loading = false;
+          return;
+        }
+
+        const allPolicies: Policy[] = Array.isArray(response.data)
+          ? response.data
+          : [];
+
+        // Temporary: display all policies returned by the API.
+        // Once authentication is connected, filter by the logged-in
+        // customer's ID instead of displaying every customer's policies.
+        this.policies = allPolicies;
 
         this.applyFilters();
         this.loading = false;
+
+        console.log('Policies loaded:', this.policies);
       },
+
       error: (error) => {
         console.error('Unable to load policies:', error);
-        this.errorMessage = 'Unable to load your policies. Please try again.';
+        console.error('HTTP status:', error.status);
+        console.error('Error details:', error.message);
+
+        this.errorMessage =
+          error.status === 0
+            ? 'Cannot connect to the Policy API. Check browser security, CORS, and the API URL.'
+            : `Unable to load policies. HTTP status: ${error.status}.`;
+
         this.loading = false;
       }
     });

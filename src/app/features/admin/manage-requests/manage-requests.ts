@@ -1,6 +1,11 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import {
+  PolicyApiService,
+  ServiceRequest
+} from '../../../core/services/policy-api';
 
 interface PolicyRequest {
   requestId: number;
@@ -15,46 +20,86 @@ interface PolicyRequest {
 @Component({
   selector: 'app-manage-requests',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './manage-requests.html',
   styleUrl: './manage-requests.css'
 })
-export class ManageRequestsComponent {
+export class ManageRequestsComponent implements OnInit {
 
-  // Temporary sample data for frontend development.
-  requests: PolicyRequest[] = [
-    {
-      requestId: 1,
-      customerId: 201,
-      policyId: 1,
-      requestType: 'RENEWAL',
-      reason: 'I want to renew my existing insurance policy.',
-      status: 'PENDING',
-      requestDate: '2026-10-22'
-    },
-    {
-      requestId: 2,
-      customerId: 202,
-      policyId: 2,
-      requestType: 'CANCELLATION',
-      reason: 'I no longer require this insurance coverage.',
-      status: 'PENDING',
-      requestDate: '2026-10-23'
-    },
-    {
-      requestId: 3,
-      customerId: 203,
-      policyId: 3,
-      requestType: 'RENEWAL',
-      reason: 'My policy is approaching its expiry date.',
-      status: 'APPROVED',
-      requestDate: '2026-10-20'
-    }
-  ];
+  requests: PolicyRequest[] = [];
 
   selectedType = 'ALL';
   selectedStatus = 'ALL';
   searchText = '';
+
+  loading = false;
+  processingRequestId: number | null = null;
+  errorMessage = '';
+  successMessage = '';
+
+  constructor(private policyApiService: PolicyApiService) {}
+
+  ngOnInit(): void {
+    this.loadRequests();
+  }
+
+  loadRequests(): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.policyApiService.getAllCancellationRequests().subscribe({
+      next: (response) => {
+        if (!response || response.success !== true) {
+          this.requests = [];
+          this.errorMessage =
+            response?.message || 'Unable to load cancellation requests.';
+          this.loading = false;
+          return;
+        }
+
+        const serviceRequests: ServiceRequest[] =
+          Array.isArray(response.data) ? response.data : [];
+
+        this.requests = serviceRequests.map(request => ({
+          requestId: request.requestId,
+          customerId: request.customerId,
+          policyId: request.policyId,
+          requestType: 'CANCELLATION',
+          reason: request.cancellationReason || '',
+          status: this.normalizeStatus(request.status),
+          requestDate: request.requestDate
+            ? request.requestDate.substring(0, 10)
+            : ''
+        }));
+
+        this.loading = false;
+      },
+
+      error: (error) => {
+        console.error('Unable to load cancellation requests:', error);
+        this.errorMessage =
+          error.status === 0
+            ? 'Cannot connect to the Closure Service. Check its URL and CORS configuration.'
+            : `Unable to load requests. HTTP status: ${error.status}.`;
+
+        this.loading = false;
+      }
+    });
+  }
+
+  private normalizeStatus(status: string): 'PENDING' | 'APPROVED' | 'REJECTED' {
+    const normalized = status?.toUpperCase();
+
+    if (normalized === 'APPROVED') {
+      return 'APPROVED';
+    }
+
+    if (normalized === 'REJECTED') {
+      return 'REJECTED';
+    }
+
+    return 'PENDING';
+  }
 
   get filteredRequests(): PolicyRequest[] {
     return this.requests.filter(request => {
@@ -71,8 +116,8 @@ export class ManageRequestsComponent {
       const matchesSearch =
         search === '' ||
         request.requestId.toString().includes(search) ||
-        request.customerId.toString().includes(search) ||
-        request.policyId.toString().includes(search);
+        String(request.customerId).includes(search) ||
+        String(request.policyId).includes(search);
 
       return matchesType && matchesStatus && matchesSearch;
     });
@@ -97,22 +142,79 @@ export class ManageRequestsComponent {
   }
 
   approveRequest(requestId: number): void {
-    const request = this.requests.find(
-      item => item.requestId === requestId
-    );
-
-    if (request && request.status === 'PENDING') {
-      request.status = 'APPROVED';
+    if (this.processingRequestId !== null) {
+      return;
     }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.processingRequestId = requestId;
+
+    this.policyApiService.approveCancellationRequest(requestId).subscribe({
+      next: (response) => {
+        if (response?.success !== true) {
+          this.errorMessage =
+            response?.message || 'Unable to approve cancellation request.';
+          this.processingRequestId = null;
+          return;
+        }
+
+        this.successMessage = 'Cancellation request approved successfully.';
+        this.processingRequestId = null;
+        this.loadRequests();
+      },
+
+      error: (error) => {
+        console.error('Unable to approve request:', error);
+        this.errorMessage =
+          `Unable to approve request. HTTP status: ${error.status}.`;
+        this.processingRequestId = null;
+      }
+    });
   }
 
   rejectRequest(requestId: number): void {
-    const request = this.requests.find(
-      item => item.requestId === requestId
-    );
+    const reason = window.prompt('Enter the reason for rejection:');
 
-    if (request && request.status === 'PENDING') {
-      request.status = 'REJECTED';
+    if (reason === null) {
+      return;
     }
+
+    if (!reason.trim()) {
+      this.errorMessage = 'Please enter a rejection reason.';
+      return;
+    }
+
+    if (this.processingRequestId !== null) {
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.processingRequestId = requestId;
+
+    this.policyApiService
+      .rejectCancellationRequest(requestId, reason.trim())
+      .subscribe({
+        next: (response) => {
+          if (response?.success !== true) {
+            this.errorMessage =
+              response?.message || 'Unable to reject cancellation request.';
+            this.processingRequestId = null;
+            return;
+          }
+
+          this.successMessage = 'Cancellation request rejected successfully.';
+          this.processingRequestId = null;
+          this.loadRequests();
+        },
+
+        error: (error) => {
+          console.error('Unable to reject request:', error);
+          this.errorMessage =
+            `Unable to reject request. HTTP status: ${error.status}.`;
+          this.processingRequestId = null;
+        }
+      });
   }
 }
