@@ -1,0 +1,125 @@
+
+<div class="issue-page">
+
+  <div class="page-heading">
+    <h2>Issue New Policy</h2>
+    <p>Enter the quote, customer, product, and policy dates.</p>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert success-alert">
+      {{ successMessage }}
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert error-alert">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <form class="policy-form" (ngSubmit)="issuePolicy()" #policyForm="ngForm">
+
+    <div class="form-section">
+      <h3>Policy Information</h3>
+      <p>Provide the identifiers associated with this policy.</p>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="quoteId">Quote ID</label>
+          <input
+            id="quoteId"
+            name="quoteId"
+            type="number"
+            [(ngModel)]="policy.quoteId"
+            min="1"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="customerId">Customer ID</label>
+          <input
+            id="customerId"
+            name="customerId"
+            type="number"
+            [(ngModel)]="policy.customerId"
+            min="1"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="productId">Product ID</label>
+          <input
+            id="productId"
+            name="productId"
+            type="number"
+            [(ngModel)]="policy.productId"
+            min="1"
+            required
+          />
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-section">
+      <h3>Policy Dates</h3>
+      <p>Enter the issue, effective, and expiry dates.</p>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label for="issueDate">Issue Date</label>
+          <input
+            id="issueDate"
+            name="issueDate"
+            type="date"
+            [(ngModel)]="policy.issueDate"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="effectiveDate">Effective Date</label>
+          <input
+            id="effectiveDate"
+            name="effectiveDate"
+            type="date"
+            [(ngModel)]="policy.effectiveDate"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="expiryDate">Expiry Date</label>
+          <input
+            id="expiryDate"
+            name="expiryDate"
+            type="date"
+            [(ngModel)]="policy.expiryDate"
+            required
+          />
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button
+        type="submit"
+        [disabled]="loading || policyForm.invalid"
+      >
+        @if (loading) {
+          Creating Policy...
+        } @else {
+          Create Policy
+        }
+      </button>
+    </div>
+
+  </form>
+
+</div>

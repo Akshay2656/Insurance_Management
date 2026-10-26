@@ -1,0 +1,78 @@
+
+<div class="policy-page">
+
+  <div class="page-heading">
+    <div>
+      <h2>Policy Register</h2>
+      <p>View all policies managed by the insurance system.</p>
+    </div>
+
+    <button class="refresh-button" (click)="loadPolicies()">
+      ↻ Refresh
+    </button>
+  </div>
+
+  <div class="summary-card">
+    <div>
+      <p>Total Policies Loaded</p>
+      <h3>{{ policies.length }}</h3>
+    </div>
+    <div class="summary-icon">▤</div>
+  </div>
+
+  @if (loading) {
+    <div class="message-card">
+      <p>Loading policies...</p>
+    </div>
+  } @else if (errorMessage) {
+    <div class="message-card error-message">
+      <p>{{ errorMessage }}</p>
+      <button class="refresh-button" (click)="loadPolicies()">
+        Try Again
+      </button>
+    </div>
+  } @else if (policies.length === 0) {
+    <div class="message-card">
+      <h3>No policies found</h3>
+      <p>There are currently no policies to display.</p>
+    </div>
+  } @else {
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Policy ID</th>
+            <th>Policy Number</th>
+            <th>Customer ID</th>
+            <th>Product ID</th>
+            <th>Issue Date</th>
+            <th>Expiry Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (policy of policies; track policy.policyId) {
+            <tr>
+              <td>{{ policy.policyId }}</td>
+              <td class="policy-number">{{ policy.policyNumber }}</td>
+              <td>{{ policy.customerId }}</td>
+              <td>{{ policy.productId }}</td>
+              <td>{{ policy.issueDate }}</td>
+              <td>{{ policy.expiryDate }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="getStatusClass(policy.status)"
+                >
+                  {{ policy.status }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+</div>

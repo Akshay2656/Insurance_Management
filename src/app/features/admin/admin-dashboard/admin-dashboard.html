@@ -1,0 +1,65 @@
+
+<div class="dashboard">
+
+  <div class="welcome-section">
+    <div>
+      <h2>Welcome, Admin!</h2>
+      <p>Here's an overview of your insurance policy management.</p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon blue">▤</div>
+      <div>
+        <p>Total Policies</p>
+        <h3>{{ totalPolicies }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">✓</div>
+      <div>
+        <p>Active Policies</p>
+        <h3>{{ activePolicies }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orange">◷</div>
+      <div>
+        <p>Pending Policies</p>
+        <h3>{{ pendingPolicies }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon red">!</div>
+      <div>
+        <p>Expired Policies</p>
+        <h3>{{ expiredPolicies }}</h3>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="section-heading">
+    <div>
+      <h2>Quick Actions</h2>
+      <p>Choose what you want to do next.</p>
+    </div>
+  </div>
+
+  <div class="quick-links">
+  @for (link of quickLinks; track link.route) {
+    <a class="quick-link-card" [routerLink]="link.route">
+      <div class="quick-link-icon">{{ link.icon }}</div>
+      <h3>{{ link.title }}</h3>
+      <p>{{ link.description }}</p>
+      <span class="card-action">Open page →</span>
+    </a>
+  }
+</div>
+
+</div>

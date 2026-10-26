@@ -1,0 +1,92 @@
+
+<div class="app-shell">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+
+    <!-- Brand -->
+    <div class="brand">
+      <div class="brand-icon">I</div>
+      <div>
+        <h2>InsurePro</h2>
+        <p>Insurance Management</p>
+      </div>
+    </div>
+
+    <!-- Role Selector -->
+    <div class="role-section">
+      <label for="role">Switch Dashboard</label>
+
+      <select
+        id="role"
+        [value]="selectedRole"
+        (change)="setRole($any($event.target).value)"
+      >
+        <option value="CUSTOMER">Customer</option>
+        <option value="ADMIN">Admin</option>
+      </select>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navigation">
+
+      @if (selectedRole === 'CUSTOMER') {
+        <p class="nav-heading">CUSTOMER MENU</p>
+
+        <a routerLink="/customer/dashboard" routerLinkActive="active">
+          <span>⌂</span> Dashboard
+        </a>
+
+        <a routerLink="/customer/policies" routerLinkActive="active">
+          <span>▤</span> My Policies
+        </a>
+
+        <a routerLink="/customer/renewal-request" routerLinkActive="active">
+          <span>↻</span> Renewal Request
+        </a>
+
+        <a routerLink="/customer/cancellation-request" routerLinkActive="active">
+          <span>×</span> Cancellation Request
+        </a>
+      } @else {
+        <p class="nav-heading">ADMIN MENU</p>
+
+        <a routerLink="/admin/dashboard" routerLinkActive="active">
+          <span>⌂</span> Dashboard
+        </a>
+
+        <a routerLink="/admin/policies" routerLinkActive="active">
+          <span>▤</span> Policy Register
+        </a>
+
+        <a routerLink="/admin/issue-policy" routerLinkActive="active">
+          <span>＋</span> Issue Policy
+        </a>
+
+        <a routerLink="/admin/requests" routerLinkActive="active">
+          <span>☷</span> Manage Requests
+        </a>
+      }
+
+    </nav>
+
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+
+    <!-- Top Header -->
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">INSURANCE MANAGEMENT SYSTEM</p>
+        <h1>{{ title }}</h1>
+      </div>
+    </header>
+
+    <section class="page-container">
+      <router-outlet></router-outlet>
+    </section>
+
+  </main>
+
+</div>

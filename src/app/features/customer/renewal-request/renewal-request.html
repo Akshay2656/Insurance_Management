@@ -1,0 +1,117 @@
+
+<div class="renewal-page">
+
+  <section class="page-heading">
+    <div>
+      <p class="eyebrow">CUSTOMER PORTAL</p>
+      <h2>Policy Renewal Request</h2>
+      <p>Choose an existing policy to request its renewal.</p>
+    </div>
+
+    <button
+      type="button"
+      class="secondary-button"
+      (click)="loadPolicies()"
+      [disabled]="loading"
+    >
+      {{ loading ? 'Loading...' : '↻ Refresh Policies' }}
+    </button>
+  </section>
+
+  <section class="info-card">
+    <div class="info-icon">i</div>
+    <div>
+      <h3>Before you continue</h3>
+      <p>
+        Select the policy you want to renew. Your renewal request will need
+        to be submitted to the insurance team for processing.
+      </p>
+    </div>
+  </section>
+
+  @if (loading) {
+    <div class="message-card">
+      Loading your policies...
+    </div>
+  }
+
+  @if (errorMessage) {
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
+  }
+
+  @if (successMessage) {
+    <div class="success-message">
+      {{ successMessage }}
+    </div>
+  }
+
+  <section class="form-card">
+    <div class="form-heading">
+      <h3>Renewal Details</h3>
+      <p>Fields marked with * are required.</p>
+    </div>
+
+    <form (submit)="$event.preventDefault(); submitRequest()">
+
+      <div class="form-group">
+        <label for="policy">Select Policy *</label>
+
+        <select
+          id="policy"
+          name="policy"
+          [(value)]="selectedPolicyId"
+          (change)="selectedPolicyId = $any($event.target).value"
+          required
+          [disabled]="loading || policies.length === 0"
+        >
+          <option value="">Choose a policy</option>
+
+          @for (policy of policies; track policy.policyId) {
+            <option [value]="policy.policyId">
+              {{ policy.policyNumber }} — {{ policy.status }}
+            </option>
+          }
+        </select>
+
+        @if (!loading && policies.length === 0) {
+          <small>No eligible policies were found for this demo customer.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="reason">Reason for Renewal (Optional)</label>
+
+        <textarea
+          id="reason"
+          name="reason"
+          rows="4"
+          placeholder="Enter any details about your renewal request..."
+          [value]="reason"
+          (input)="reason = $any($event.target).value"
+        ></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button
+          type="button"
+          class="secondary-button"
+          (click)="selectedPolicyId = ''; reason = ''; errorMessage = ''; successMessage = ''"
+        >
+          Clear Form
+        </button>
+
+        <button
+          type="submit"
+          class="primary-button"
+          [disabled]="loading || submitting || policies.length === 0"
+        >
+          Submit Renewal Request
+        </button>
+      </div>
+
+    </form>
+  </section>
+
+</div>

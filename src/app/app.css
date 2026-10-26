@@ -1,0 +1,294 @@
+
+/* Global page styling */
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #1e293b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Main layout: sidebar left, content right */
+.app-shell {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  width: 100%;
+  min-height: 100vh;
+  background: #f4f7fb;
+}
+
+/* Sidebar */
+.sidebar {
+  flex: 0 0 260px;
+  width: 260px;
+  min-width: 260px;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 25px 18px;
+  background: #14213d;
+  color: #ffffff;
+}
+
+/* Brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 5px 8px 28px;
+  border-bottom: 1px solid #34415b;
+}
+
+.brand-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 12px;
+  background: #3b82f6;
+  color: #ffffff;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.brand h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.brand p {
+  margin: 5px 0 0;
+  color: #b9c5d9;
+  font-size: 11px;
+}
+
+/* Role selector */
+.role-section {
+  margin: 26px 0;
+}
+
+.role-section label {
+  display: block;
+  margin-bottom: 9px;
+  color: #b9c5d9;
+  font-size: 12px;
+}
+
+.role-section select {
+  width: 100%;
+  padding: 11px;
+
+  border: 1px solid #46536d;
+  border-radius: 8px;
+  outline: none;
+
+  background: #243451;
+  color: #ffffff;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Navigation */
+.navigation {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-heading {
+  margin: 0 0 10px 10px;
+  color: #91a1bc;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.navigation a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 13px 12px;
+  border-radius: 8px;
+
+  color: #d6deeb;
+  text-decoration: none;
+  font-size: 14px;
+
+  transition: background 0.2s, color 0.2s;
+}
+
+.navigation a span {
+  width: 20px;
+  flex-shrink: 0;
+  text-align: center;
+  font-size: 18px;
+}
+
+.navigation a:hover {
+  background: #243451;
+  color: #ffffff;
+}
+
+.navigation a.active {
+  background: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Sidebar footer */
+.sidebar-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: auto;
+  padding: 20px 5px 0;
+  border-top: 1px solid #34415b;
+}
+
+.footer-avatar {
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.sidebar-footer strong {
+  font-size: 12px;
+}
+
+.sidebar-footer p {
+  margin: 4px 0 0;
+  color: #b9c5d9;
+  font-size: 11px;
+}
+
+/* Right-side content */
+.main-content {
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 100vh;
+}
+
+/* Top header */
+.topbar {
+  min-height: 105px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+
+  padding: 24px 35px;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+}
+
+.topbar h1 {
+  margin: 0;
+  color: #14213d;
+  font-size: 24px;
+}
+
+.demo-badge {
+  padding: 8px 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 20px;
+
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* Routed page content */
+.page-container {
+  width: 100%;
+  min-width: 0;
+  padding: 30px 35px;
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+  .app-shell {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    flex: 0 0 auto;
+    width: 100%;
+    min-width: 0;
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .brand {
+    padding-bottom: 16px;
+  }
+
+  .role-section {
+    margin: 16px 0;
+  }
+
+  .navigation {
+    gap: 5px;
+  }
+
+  .sidebar-footer {
+    margin-top: 20px;
+  }
+
+  .main-content {
+    width: 100%;
+    min-height: auto;
+  }
+
+  .topbar {
+    min-height: auto;
+    padding: 22px 18px;
+  }
+
+  .topbar h1 {
+    font-size: 20px;
+  }
+
+  .page-container {
+    padding: 20px 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,106 @@
+
+<div class="dashboard">
+
+  <!-- Welcome Section -->
+  <section class="welcome-section">
+    <div>
+      <p class="eyebrow">CUSTOMER PORTAL</p>
+      <h2>Welcome, Customer!</h2>
+      <p>View your insurance policies and manage your requests.</p>
+    </div>
+
+    <button
+      type="button"
+      class="refresh-button"
+      (click)="loadCustomerPolicies()"
+      [disabled]="loading"
+    >
+      {{ loading ? 'Loading...' : '↻ Refresh' }}
+    </button>
+  </section>
+
+  <!-- Loading Message -->
+  @if (loading) {
+    <div class="message-card">
+      Loading your policies...
+    </div>
+  }
+
+  <!-- Error Message -->
+  @if (errorMessage) {
+    <div class="error-message">
+      {{ errorMessage }}
+    </div>
+  }
+
+  <!-- Policy Statistics -->
+  <section class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon blue">▤</div>
+      <div>
+        <p>Total Policies</p>
+        <h3>{{ totalPolicies }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon green">✓</div>
+      <div>
+        <p>Active Policies</p>
+        <h3>{{ activePolicies }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon orange">◷</div>
+      <div>
+        <p>Pending Policies</p>
+        <h3>{{ pendingPolicies }}</h3>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon red">!</div>
+      <div>
+        <p>Expired Policies</p>
+        <h3>{{ expiredPolicies }}</h3>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Quick Actions -->
+  <section class="quick-actions-section">
+    <div class="section-heading">
+      <h2>Quick Actions</h2>
+      <p>What would you like to do today?</p>
+    </div>
+
+    <div class="quick-links">
+
+      <a class="quick-link-card" routerLink="/customer/policies">
+        <div class="quick-link-icon">▤</div>
+        <h3>My Policies</h3>
+        <p>View your insurance policies and their current status.</p>
+        <span class="card-action">View policies →</span>
+      </a>
+
+      <a class="quick-link-card" routerLink="/customer/renewal-request">
+        <div class="quick-link-icon">↻</div>
+        <h3>Renew Policy</h3>
+        <p>Start a renewal request for an existing policy.</p>
+        <span class="card-action">Request renewal →</span>
+      </a>
+
+      <a class="quick-link-card" routerLink="/customer/cancellation-request">
+        <div class="quick-link-icon">×</div>
+        <h3>Cancel Policy</h3>
+        <p>Submit a cancellation request for your policy.</p>
+        <span class="card-action">Request cancellation →</span>
+      </a>
+
+    </div>
+  </section>
+
+</div>
